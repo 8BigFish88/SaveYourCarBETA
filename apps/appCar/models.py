@@ -20,7 +20,7 @@ class Car(db.Model):
     carDataValues = db.relationship('CarDataValue', backref='car_author', lazy=True)
     
     def __repr__(self):
-        return f"Car('{self.name}', '{self.matriculation}', '{self.fuel}','{self.image_file}', {self.carDataValues.valueInt}, {self.carDataValues.valueDate})"
+        return f"Car('{self.name}', '{self.matriculation}', '{self.fuel}','{self.image_file}', {self.carDataValues}')"
 
 class CarDataValue(db.Model):
     id = db.Column(db.Integer, primary_key=True)
