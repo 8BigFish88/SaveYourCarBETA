@@ -73,6 +73,58 @@
                     {{ form.dataRevisione(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
+            <div class="form-group">
+                {{ form.kmTagliando.label(class="form-control-label") }}
+                {% if form.kmTagliando.errors %}
+                    {{ form.kmTagliando(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.kmTagliando.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.kmTagliando(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.dataAssicurazione.label(class="form-control-label") }}
+                {% if form.dataAssicurazione.errors %}
+                    {{ form.dataAssicurazione(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.dataAssicurazione.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.dataAssicurazione(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.dataBollo.label(class="form-control-label") }}
+                {% if form.dataBollo.errors %}
+                    {{ form.dataBollo(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.dataBollo.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.dataBollo(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{ form.kmMedi.label(class="form-control-label") }}
+                {% if form.kmMedi.errors %}
+                    {{ form.kmMedi(class="form-control form-control-lg is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.kmMedi.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.kmMedi(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
         </fieldset>
         <div class="form-group">
             {{ form.submit(class="btn btn-outline-info") }}

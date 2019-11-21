@@ -11,4 +11,8 @@ class CarForm(FlaskForm):
     matriculation = DateField('Data immatricolazione (aa-mm-gg)', validators=[DataRequired()])
     kmattuali = StringField('Km attuali', validators=[DataRequired()])
     dataRevisione = DateField('Data ultima revisione (aa-mm-gg)', validators=[DataRequired()])
+    kmTagliando = StringField('Km ultimo Tagliando', validators=[DataRequired()])
+    dataAssicurazione = DateField('Scadenza Assicurazione (aa-mm-gg)', validators=[DataRequired()])
+    dataBollo = DateField('Scadenza Bollo (aa-mm-gg)', validators=[DataRequired()])
+    kmMedi = StringField('Km medi settimanali', validators=[DataRequired()])
     submit = SubmitField('Submit')

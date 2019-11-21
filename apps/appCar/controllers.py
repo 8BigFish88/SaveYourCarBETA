@@ -9,6 +9,7 @@ from apps.appCar.models import Car, CarDataValue, CarData
 from flask_login import login_user, current_user, logout_user, login_required
 from jinja2 import TemplateNotFound
 from datetime import datetime
+from apps.appCar.utils import *
 
 cars = Blueprint('cars', __name__, template_folder='templates')
                      
@@ -25,11 +26,8 @@ def new_car():
     form = CarForm()
     if form.validate_on_submit():
        car = Car(name=form.name.data, fuel= form.fuel.data, matriculation=form.matriculation.data, author=current_user)
-       carDataValue1 = CarDataValue(valueInt = form.kmattuali.data, id_CarData = 1, car_author = car )
-       carDataValue2 = CarDataValue(valueDate = form.dataRevisione.data, id_CarData = 2, car_author = car )
        db.session.add(car)
-       db.session.add(carDataValue1)
-       db.session.add(carDataValue2)
+       AddCarValueToDb(car,form)
        db.session.commit()
        flash('I dati della tua auto sono stati salvati !', 'success')
        return redirect(url_for('main.home'))
@@ -48,16 +46,15 @@ def car(car_id):
 def update_car(car_id):
     car = Car.query.get(car_id)
     carValues = CarDataValue.query.filter_by(id_Car = car.id).all()
+    carData = CarData.query.all()
     form = CarForm()
     if form.validate_on_submit():
         car.name = form.name.data
         car.fuel = form.fuel.data
         car.matriculation = form.matriculation.data
-        for i in carValues:
-          if i.valueInt:
-             i.valueInt = form.kmattuali.data
-          if i.valueDate != datetime.utcnow:
-             i.valueDate = form.dataRevisione.data
+        for carValue in carValues:
+          CaraData_id = carValue.id_CarData
+          InsertCarDataValue(carValue,CaraData_id,form)
         db.session.commit()
         flash('I dati della tua auto sono stati aggiornati!', 'success')
         return redirect(url_for('cars.car', car_id=car.id))
@@ -66,10 +63,18 @@ def update_car(car_id):
         form.fuel.data = car.fuel
         form.matriculation.data = car.matriculation
         for i in carValues:
-          if i.valueInt:
-            form.kmattuali.data = i.valueInt
-          if i.valueDate != datetime.utcnow:
-            form.dataRevisione.data = i.valueDate
+          if i.id_CarData==1:
+             form.kmattuali.data = i.valueInt
+          if i.id_CarData==2:
+             form.dataRevisione.data = i.valueDate
+          if i.id_CarData==3:
+             form.kmTagliando.data = i.valueInt
+          if i.id_CarData==4:
+             form.dataAssicurazione.data = i.valueDate
+          if i.id_CarData==5:
+             form.dataBollo.data = i.valueDate
+          if i.id_CarData==6:
+             form.kmMedi.data = i.valueInt
     image_file = url_for('static', filename='car_pics/' + car.image_file)
     return render_template('new_car.html', title='Update Car',
                            image_file=image_file, form=form, legend='Update Car')
