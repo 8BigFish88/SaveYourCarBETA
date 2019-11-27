@@ -24,10 +24,11 @@ class Car(db.Model):
 
 class CarDataValue(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    valueInt = db.Column(db.Integer, nullable=True)
+    valueInt = db.Column(db.Integer, nullable=True, default=0)
     valueDate = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
     id_CarData = db.Column(db.Integer, db.ForeignKey('car_data.id'), nullable=False)
     id_Car = db.Column(db.Integer, db.ForeignKey('car.id'), nullable=False)
-    
+    #relationReminderCarData = db.relationship('RelationReminderCarData', backref='owner', lazy=True)
+
     def __repr__(self):
         return f"Car('{self.valueInt}', '{self.valueDate}')"

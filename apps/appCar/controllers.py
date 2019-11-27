@@ -16,8 +16,7 @@ cars = Blueprint('cars', __name__, template_folder='templates')
 
 @cars.route("/auto")
 @login_required
-def auto():
-    cars = Car.query.all()
+def auto():  
     return render_template('auto.html', title=current_user.username, cars=current_user.cars)
 
 @cars.route("/car/new_car", methods=['GET', 'POST'])
@@ -38,7 +37,8 @@ def new_car():
 @cars.route("/car/<int:car_id>")
 def car(car_id):
     car = Car.query.get(car_id)
-    print(car)
+    carValues = CarDataValue.query.filter_by(id_Car = car.id).all()
+    FlashReminders(car, carValues)
     return render_template('car.html', title=car.name, car=car)
 
 @cars.route("/car/<int:car_id>/update", methods=['GET', 'POST'])
@@ -52,9 +52,7 @@ def update_car(car_id):
         car.name = form.name.data
         car.fuel = form.fuel.data
         car.matriculation = form.matriculation.data
-        for carValue in carValues:
-          CaraData_id = carValue.id_CarData
-          InsertCarDataValue(carValue,CaraData_id,form)
+        InsertCarDataValue(carValues,form)
         db.session.commit()
         flash('I dati della tua auto sono stati aggiornati!', 'success')
         return redirect(url_for('cars.car', car_id=car.id))
@@ -65,15 +63,15 @@ def update_car(car_id):
         for i in carValues:
           if i.id_CarData==1:
              form.kmattuali.data = i.valueInt
-          if i.id_CarData==2:
+          elif i.id_CarData==2:
              form.dataRevisione.data = i.valueDate
-          if i.id_CarData==3:
+          elif i.id_CarData==3:
              form.kmTagliando.data = i.valueInt
-          if i.id_CarData==4:
+          elif i.id_CarData==4:
              form.dataAssicurazione.data = i.valueDate
-          if i.id_CarData==5:
+          elif i.id_CarData==5:
              form.dataBollo.data = i.valueDate
-          if i.id_CarData==6:
+          elif i.id_CarData==6:
              form.kmMedi.data = i.valueInt
     image_file = url_for('static', filename='car_pics/' + car.image_file)
     return render_template('new_car.html', title='Update Car',

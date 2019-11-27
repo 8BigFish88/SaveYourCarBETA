@@ -25,9 +25,13 @@ def create_app(config_class=Config):
 
     from apps.appUser.controllers import users
     from apps.appCar.controllers import cars
+    #from apps.appReminder.controllers import reminders
     from apps.main.controllers import main
+    from apps.errors.handlers import errors
     app.register_blueprint(users)
     app.register_blueprint(cars)
+    #app.register_blueprint(reminders)
     app.register_blueprint(main)
+    app.register_blueprint(errors)
 
     return app

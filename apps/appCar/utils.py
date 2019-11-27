@@ -1,23 +1,23 @@
 from apps.appCar.models import Car, CarDataValue, CarData
-from apps import db, bcrypt
+from apps import db
+from datetime import datetime  
+from datetime import timedelta  
+from flask import flash
 
-def InsertCarDataValue(CarDataValue,CaraData_id,form):
-	for i in range(1,7,1):
-		lista = [form.kmattuali.data, form.dataRevisione.data, form.kmTagliando.data, form.dataAssicurazione.data, form.dataBollo.data, form.kmMedi.data]
-		if CaraData_id == i:
-			if i == 1 or 3 or 6:
-				CarDataValue.valueInt = lista[i-1]
-			elif i == 2 or 4 or 5:
-				CarDataValue.valueDate = lista[i-1]
-
-def GetCarDataValue(CarDataValue,CaraData_id,form):
-	lista = [form.kmattuali, form.dataRevisione, form.kmTagliando, form.dataAssicurazione, form.dataBollo, form.kmMedi]
-	for i in lista:
-		if CaraData_id == lista.index(i)+1:
-			if lista.index(i)+1 == 1 or 3 or 6:
-				i.data = CarDataValue.valueInt
-			elif lista.index(i)+1 == 2 or 4 or 5:
-				i.data = CarDataValue.valueDate
+def InsertCarDataValue(carValues,form):
+	for i in carValues:
+          if i.id_CarData==1:
+             i.valueInt = form.kmattuali.data
+          elif i.id_CarData==2:
+             i.valueDate = form.dataRevisione.data
+          elif i.id_CarData==3:
+             i.valueInt = form.kmTagliando.data
+          elif i.id_CarData==4:
+              i.valueDate = form.dataAssicurazione.data
+          elif i.id_CarData==5:
+             i.valueDate = form.dataBollo.data
+          elif i.id_CarData==6:
+             i.valueInt  = form.kmMedi.data
 
 def AddCarValueToDb(car,form):
 	lista = [form.kmattuali.data, form.dataRevisione.data, form.kmTagliando.data, form.dataAssicurazione.data, form.dataBollo.data, form.kmMedi.data]
@@ -29,6 +29,65 @@ def AddCarValueToDb(car,form):
 		elif i == 2 or 4 or 5:
 			carDataValue[i] = CarDataValue(valueDate = lista[i-1], id_CarData = i, car_author = car )
 			db.session.add(carDataValue[i])
+
+def GetKm(car, carvalues):
+	for carvalue in carvalues:
+		if carvalue.id_CarData == 6:
+			kmMedi = carvalue.valueInt
+			return kmMedi
+
+def GetDateDetection(car, carvalues):
+	for carvalue in carvalues:
+		if carvalue.id_CarData == 1:
+			rilievo = [carvalue.valueDate, carvalue.valueInt]
+			return rilievo
+
+def FlashReminders(car,carvalues):
+	kmMedi = GetKm(car, carvalues)
+	rilievo = GetDateDetection(car, carvalues)
+	for value in carvalues:
+		if (datetime.now() >= value.valueDate - timedelta(days=30)) and (value.id_CarData == 4):   
+			flash('La tua assicurazione sta per scadere. Rinnovala!', 'danger')
+		if (datetime.now() >= value.valueDate - timedelta(days=30)) and (value.id_CarData == 5):   
+			flash('Il tuo bollo sta per scadere. Rinnovalo!', 'danger')
+		if  ((((datetime.now() - value.valueDate >= timedelta(days=730) - timedelta(days=30)) 
+				and 
+				(datetime.now() - car.matriculation >= timedelta(days=1460)) 
+				)
+				or 
+				(
+				(datetime.now() - car.matriculation < timedelta(days=1460))
+				and 
+				(timedelta(days=1460) - (datetime.now() - car.matriculation) <= timedelta(days=30)) 
+				)
+				)
+				and 
+				(value.id_CarData == 2)):    
+			flash('Devi fare la revisione. Affrettati!', 'danger')
+		if ((value.id_CarData == 3) 
+			and
+			((rilievo[1] + (kmMedi*((datetime.now() - rilievo[0])/timedelta(days=7))))-value.valueInt > 30000)
+			):
+			flash('Devi fare il tagliando. Affrettati!', 'danger')
+
+
+
+
+"""
+def GetCarDataValue(CarDataValue,CaraData_id,form):
+	lista = {1 : 'kmattuali.data', 2: 'dataRevisione.data', 3: 'kmTagliando.data', 4: 'dataAssicurazione.data', 5: 'dataBollo.label', 6: 'kmMedi.data'}
+	for i in lista.keys():
+		if CaraData_id == i:
+			if i == 1 or 3 or 6:
+				setattr(form, lista[i], CarDataValue.valueInt)
+			elif i == 2 or 4 or 5:
+				setattr(form, lista[i], CarDataValue.valueDate)
+	print(form.kmattuali.data)
+
+	
+	#map(lambda item: setattr(someObject, *item), attrs.iteritems())
+"""
+
 		
 		
 	
