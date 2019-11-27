@@ -1,3 +1,16 @@
 {% extends "layout.html" %}
 {% block content %}
+    <div class="col-sm-8 text-left"> 
+      <h1>Benvenuto su <big>SaveYourCar</big></h1>
+      <p>Questa Web App è indirizzata a chiunque voglia monitorare al meglio la propria auto.</p>
+      <p>Registrati o effettua il login per usufruire di tutti i nostri serizi!</p>
+      <hr>
+      <h3></h3>
+      <p></p>
+    </div>
+    <div class="col-sm-2 sidenav">
+      <div>
+		<img class="rounded mx-auto d-block" src="{{ url_for('static', filename='default.png') }}">
+      </div>
+    </div>
 {% endblock content %}

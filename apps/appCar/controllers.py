@@ -17,6 +17,8 @@ cars = Blueprint('cars', __name__, template_folder='templates')
 @cars.route("/auto")
 @login_required
 def auto():  
+    for car in current_user.cars:
+      FlashReminders(car, car.carDataValues)  
     return render_template('auto.html', title=current_user.username, cars=current_user.cars)
 
 @cars.route("/car/new_car", methods=['GET', 'POST'])

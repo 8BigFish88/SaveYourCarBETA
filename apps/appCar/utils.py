@@ -47,9 +47,9 @@ def FlashReminders(car,carvalues):
 	rilievo = GetDateDetection(car, carvalues)
 	for value in carvalues:
 		if (datetime.now() >= value.valueDate - timedelta(days=30)) and (value.id_CarData == 4):   
-			flash('La tua assicurazione sta per scadere. Rinnovala!', 'danger')
+			flash(car.name.upper() +': L\' ASSICURAZIONE di quest\' auto sta per scadere. Rinnovala!', 'danger')
 		if (datetime.now() >= value.valueDate - timedelta(days=30)) and (value.id_CarData == 5):   
-			flash('Il tuo bollo sta per scadere. Rinnovalo!', 'danger')
+			flash(car.name.upper() +': Il BOLLO di quest\' auto sta per scadere. Rinnovalo!', 'danger')
 		if  ((((datetime.now() - value.valueDate >= timedelta(days=730) - timedelta(days=30)) 
 				and 
 				(datetime.now() - car.matriculation >= timedelta(days=1460)) 
@@ -63,12 +63,12 @@ def FlashReminders(car,carvalues):
 				)
 				and 
 				(value.id_CarData == 2)):    
-			flash('Devi fare la revisione. Affrettati!', 'danger')
+			flash(car.name.upper() +': Quest\' auto deve fare la REVISIONE. Affrettati!', 'danger')
 		if ((value.id_CarData == 3) 
 			and
 			((rilievo[1] + (kmMedi*((datetime.now() - rilievo[0])/timedelta(days=7))))-value.valueInt > 30000)
 			):
-			flash('Devi fare il tagliando. Affrettati!', 'danger')
+			flash(car.name.upper() +': Quest\' auto ha bisogno di un TAGLIANDO. Affrettati!', 'danger')
 
 
 
