@@ -1,5 +1,6 @@
 from datetime import datetime
-from apps import db, login_manager
+from apps import db, login_manager, admin
+from flask_admin.contrib.sqla import ModelView
 
 class CarData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -32,3 +33,5 @@ class CarDataValue(db.Model):
 
     def __repr__(self):
         return f"Car('{self.valueInt}', '{self.valueDate}')"
+
+
