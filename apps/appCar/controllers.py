@@ -10,6 +10,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 from jinja2 import TemplateNotFound
 from datetime import datetime
 from apps.appCar.utils import *
+import logging
 
 cars = Blueprint('cars', __name__, template_folder='templates')
                      
@@ -33,6 +34,8 @@ def new_car():
        flash('I dati della tua auto sono stati salvati !', 'success')
        return redirect(url_for('main.home'))
        image_file = url_for('static', filename='car_pics/' + car.image_file)
+    else:
+       logging.info('campo mancante o errato')
     return render_template('new_car.html', title='New Car',
                             form=form, legend='Nuova Auto')
 

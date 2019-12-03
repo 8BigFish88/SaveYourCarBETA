@@ -20,15 +20,24 @@ def InsertCarDataValue(carValues,form):
              i.valueInt  = form.kmMedi.data
 
 def AddCarValueToDb(car,form):
-	lista = [form.kmattuali.data, form.dataRevisione.data, form.kmTagliando.data, form.dataAssicurazione.data, form.dataBollo.data, form.kmMedi.data]
-	carDataValue={}
-	for i in range(1,7):
-		if i == 1 or 3 or 6:
-			carDataValue[i] = CarDataValue(valueInt = lista[i-1], id_CarData = i, car_author = car )
-			db.session.add(carDataValue[i])
-		elif i == 2 or 4 or 5:
-			carDataValue[i] = CarDataValue(valueDate = lista[i-1], id_CarData = i, car_author = car )
-			db.session.add(carDataValue[i])
+	carValue1 = CarDataValue(valueInt = form.kmattuali.data,
+                                           id_CarData = 1, car_author = car )
+	db.session.add(carValue1)
+	carValue2 = CarDataValue(valueDate = form.dataRevisione.data,
+                                           id_CarData = 2, car_author = car )
+	db.session.add(carValue2)
+	carValue3 = CarDataValue(valueInt = form.kmTagliando.data,
+                                           id_CarData = 3, car_author = car )
+	db.session.add(carValue3)
+	carValue4 = CarDataValue(valueDate = form.dataAssicurazione.data,
+                                           id_CarData = 4, car_author = car )
+	db.session.add(carValue4)
+	carValue5 = CarDataValue(valueDate = form.dataBollo.data,
+                                           id_CarData = 5, car_author = car )
+	db.session.add(carValue5)
+	carValue6 = CarDataValue(valueInt = form.kmMedi.data,
+                                           id_CarData = 6, car_author = car )
+	db.session.add(carValue6)
 
 def GetKm(car, carvalues):
 	for carvalue in carvalues:
