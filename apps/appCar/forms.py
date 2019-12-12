@@ -7,7 +7,7 @@ from apps.appCar.models import Car
 
 class CarForm(FlaskForm):
     name = StringField('Nome', validators=[DataRequired()])
-    fuel = RadioField('Alimentazione', choices = [('Benzina','Benzina'),('Diesel','Diesel')], validators=[DataRequired()])
+    fuel = RadioField('Alimentazione', choices = [('Benzina','Benzina'),('Diesel','Diesel'),('GPL','GPL')], validators=[DataRequired()])
     matriculation = DateField('Data immatricolazione (aa-mm-gg)', validators=[DataRequired()])
     kmattuali = IntegerField('Km attuali', validators=[DataRequired()])
     dataRevisione = DateField('Data ultima revisione (aa-mm-gg)', validators=[DataRequired()])
