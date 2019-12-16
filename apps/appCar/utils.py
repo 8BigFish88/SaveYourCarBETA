@@ -52,22 +52,20 @@ def GetDateDetection(car, carvalues):
 			rilievo = [carvalue.valueDate, carvalue.valueInt]
 			return rilievo
 
-def FlashReminders(car,carvalues):
-	kmMedi = GetKm(car, carvalues)
-	rilievo = GetDateDetection(car, carvalues)
-	reminder_collection = mongo.db.reminder
-	for value in carvalues:
-		if (datetime.now() >= value.valueDate - timedelta(days=30)) and (value.id_CarData == 4):
-			reminder = reminder_collection.find_one({ 'title' : car.name.upper() })
-			reminder["reminders"]['ASSICURAZIONE']=": Devi fare l'ASSICURAZIONE!Affrettati!"
-			reminder_collection.save(reminder)
-			flash( reminder["title"] + reminder["reminders"]["ASSICURAZIONE"] , 'danger')
-		if (datetime.now() >= value.valueDate - timedelta(days=30)) and (value.id_CarData == 5):
-			reminder = reminder_collection.find_one({ 'title' : car.name.upper() })
-			reminder["reminders"]['BOLLO']=": Devi rinnovare il BOLLO!Affrettati!"
-			reminder_collection.save(reminder)
-			flash( reminder["title"] + reminder["reminders"]["BOLLO"] , 'danger')   
-		if  ((((datetime.now() - value.valueDate >= timedelta(days=730) - timedelta(days=30)) 
+def assicurazione(car, value):
+	 if (datetime.now() >= value.valueDate - timedelta(days=30)) and (value.id_CarData == 4):
+		 return True
+	 else:
+		 return False
+		
+def bollo(car, value):
+	 if (datetime.now() >= value.valueDate - timedelta(days=30)) and (value.id_CarData == 5):
+		 return True
+	 else:
+		 return False
+
+def revisione(car, value):
+	 if ((((datetime.now() - value.valueDate >= timedelta(days=730) - timedelta(days=30)) 
 				and 
 				(datetime.now() - car.matriculation >= timedelta(days=1460)) 
 				)
@@ -79,19 +77,47 @@ def FlashReminders(car,carvalues):
 				)
 				)
 				and 
-				(value.id_CarData == 2)):    
+				(value.id_CarData == 2)):  
+		 return True
+	 else:
+		 return False
+
+def tagliando(car, value, kmMedi, rilievo):
+	 if ((value.id_CarData == 3) 
+			and
+			((rilievo[1] + (kmMedi*((datetime.now() - rilievo[0])/timedelta(days=7))))-value.valueInt > 30000)
+			):
+		 return True
+	 else:
+		 return False
+
+def FlashReminders(car,carvalues):
+	kmMedi = GetKm(car, carvalues)
+	rilievo = GetDateDetection(car, carvalues)
+	reminder_collection = mongo.db.reminder
+	for value in carvalues:
+		if	assicurazione(car, value):
+			reminder = reminder_collection.find_one({ 'title' : car.name.upper() })
+			reminder["reminders"]['ASSICURAZIONE']=": Devi fare l'ASSICURAZIONE!Affrettati!"
+			reminder_collection.save(reminder)
+			flash( reminder["title"] + reminder["reminders"]["ASSICURAZIONE"] , 'danger')
+		if  bollo(car,value):
+			reminder = reminder_collection.find_one({ 'title' : car.name.upper() })
+			reminder["reminders"]['BOLLO']=": Devi rinnovare il BOLLO!Affrettati!"
+			reminder_collection.save(reminder)
+			flash( reminder["title"] + reminder["reminders"]["BOLLO"] , 'danger')   
+		if  revisione(car,value):
 			reminder = reminder_collection.find_one({ 'title' : car.name.upper() })
 			reminder["reminders"]['REVISIONE']=": Quest'auto ha bisogno di una REVISIONE!Affrettati!"
 			reminder_collection.save(reminder)
 			flash( reminder["title"] + reminder["reminders"]["REVISIONE"] , 'danger')  
-		if ((value.id_CarData == 3) 
-			and
-			((rilievo[1] + (kmMedi*((datetime.now() - rilievo[0])/timedelta(days=7))))-value.valueInt > 30000)
-			):
+		if  tagliando(car, value, kmMedi, rilievo):
 			reminder = reminder_collection.find_one({ 'title' : car.name.upper() })
 			reminder["reminders"]['TAGLIANDO']=": Quest'auto ha bisogno di un TAGLIANDO!"
 			reminder_collection.save(reminder)
-			flash( reminder["title"] + reminder["reminders"]["TAGLIANDO"] , 'danger')  
+			flash( reminder["title"] + reminder["reminders"]["TAGLIANDO"] , 'danger') 
+
+
 			
 
 

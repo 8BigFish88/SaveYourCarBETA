@@ -18,9 +18,11 @@ cars = Blueprint('cars', __name__, template_folder='templates')
 
 @cars.route("/auto")
 @login_required
-def auto():  
+def auto(): 
+    reminder_collection = mongo.db.reminder 
     for car in current_user.cars:
-      FlashReminders(car, car.carDataValues)  
+      
+      reminderT = reminder_collection.find_one({ 'title' : 'ReminderRevisione' }) 
     return render_template('auto.html', title=current_user.username, cars=current_user.cars)
 
 @cars.route("/car/new_car", methods=['GET', 'POST'])
