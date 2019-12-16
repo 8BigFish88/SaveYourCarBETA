@@ -20,10 +20,12 @@ cars = Blueprint('cars', __name__, template_folder='templates')
 @login_required
 def auto(): 
     reminder_collection = mongo.db.reminder 
+    user_cars = {}
     for car in current_user.cars:
-      
-      reminderT = reminder_collection.find_one({ 'title' : 'ReminderRevisione' }) 
-    return render_template('auto.html', title=current_user.username, cars=current_user.cars)
+       reminders = reminder_collection.find_one({ 'title' : car.name.upper() })
+       user_cars[car.name.upper()]=listCarReminders(car,car.carDataValues)
+      #user_cars[car.name.upper()] = reminders["reminders"]
+    return render_template('auto.html', title=current_user.username, cars=current_user.cars, user_cars=user_cars)
 
 @cars.route("/car/new_car", methods=['GET', 'POST'])
 @login_required

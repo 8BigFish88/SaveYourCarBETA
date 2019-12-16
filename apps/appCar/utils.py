@@ -95,30 +95,45 @@ def FlashReminders(car,carvalues):
 	kmMedi = GetKm(car, carvalues)
 	rilievo = GetDateDetection(car, carvalues)
 	reminder_collection = mongo.db.reminder
+	reminder = reminder_collection.find_one({ 'title' : car.name.upper() })
+	for value in carvalues:
+		if	assicurazione(car, value):
+			flash( reminder["reminders"]["ASSICURAZIONE"] , 'danger')
+		if  bollo(car,value):
+			flash( reminder["reminders"]["BOLLO"] , 'danger')   
+		if  revisione(car,value):
+			flash( reminder["reminders"]["REVISIONE"] , 'danger')  
+		if  tagliando(car, value, kmMedi, rilievo):
+			flash( reminder["reminders"]["TAGLIANDO"] , 'danger') 
+
+def listCarReminders(car,carvalues):
+	kmMedi = GetKm(car, carvalues)
+	rilievo = GetDateDetection(car, carvalues)
+	reminder_collection = mongo.db.reminder
+	reminder = reminder_collection.find_one({ 'title' : car.name.upper() })
+	reminders_list = []
 	for value in carvalues:
 		if	assicurazione(car, value):
 			reminder = reminder_collection.find_one({ 'title' : car.name.upper() })
-			reminder["reminders"]['ASSICURAZIONE']=": Devi fare l'ASSICURAZIONE!Affrettati!"
+			reminder["reminders"]['ASSICURAZIONE']=" Devi fare l'ASSICURAZIONE!Affrettati!"
 			reminder_collection.save(reminder)
-			flash( reminder["title"] + reminder["reminders"]["ASSICURAZIONE"] , 'danger')
+			reminders_list.append(reminder["reminders"]["ASSICURAZIONE"])
 		if  bollo(car,value):
 			reminder = reminder_collection.find_one({ 'title' : car.name.upper() })
-			reminder["reminders"]['BOLLO']=": Devi rinnovare il BOLLO!Affrettati!"
+			reminder["reminders"]['BOLLO']=" Devi rinnovare il BOLLO!Affrettati!"
 			reminder_collection.save(reminder)
-			flash( reminder["title"] + reminder["reminders"]["BOLLO"] , 'danger')   
+			reminders_list.append(reminder["reminders"]["BOLLO"])  
 		if  revisione(car,value):
 			reminder = reminder_collection.find_one({ 'title' : car.name.upper() })
-			reminder["reminders"]['REVISIONE']=": Quest'auto ha bisogno di una REVISIONE!Affrettati!"
+			reminder["reminders"]['REVISIONE']=" Quest'auto ha bisogno di una REVISIONE!Affrettati!"
 			reminder_collection.save(reminder)
-			flash( reminder["title"] + reminder["reminders"]["REVISIONE"] , 'danger')  
+			reminders_list.append(reminder["reminders"]["REVISIONE"])  
 		if  tagliando(car, value, kmMedi, rilievo):
 			reminder = reminder_collection.find_one({ 'title' : car.name.upper() })
-			reminder["reminders"]['TAGLIANDO']=": Quest'auto ha bisogno di un TAGLIANDO!"
+			reminder["reminders"]['TAGLIANDO']=" Quest'auto ha bisogno di un TAGLIANDO!"
 			reminder_collection.save(reminder)
-			flash( reminder["title"] + reminder["reminders"]["TAGLIANDO"] , 'danger') 
-
-
-			
+			reminders_list.append(reminder["reminders"]["TAGLIANDO"])  
+	return reminders_list
 
 
 
