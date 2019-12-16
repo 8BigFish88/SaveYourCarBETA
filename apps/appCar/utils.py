@@ -59,12 +59,14 @@ def FlashReminders(car,carvalues):
 	for value in carvalues:
 		if (datetime.now() >= value.valueDate - timedelta(days=30)) and (value.id_CarData == 4):
 			reminder = reminder_collection.find_one({ 'title' : car.name.upper() })
-			reminder["reminders"]['ASSICURAZIONE']=": Devi fare la Assicurazione!Affrettati!"
+			reminder["reminders"]['ASSICURAZIONE']=": Devi fare l'ASSICURAZIONE!Affrettati!"
 			reminder_collection.save(reminder)
 			flash( reminder["title"] + reminder["reminders"]["ASSICURAZIONE"] , 'danger')
-				#flash(car.name.upper() +': L\' ASSICURAZIONE di quest\' auto sta per scadere. Rinnovala!', 'danger')	 
-		if (datetime.now() >= value.valueDate - timedelta(days=30)) and (value.id_CarData == 5):   
-				 flash(car.name.upper() +': Il BOLLO di quest\' auto sta per scadere. Rinnovalo!', 'danger')
+		if (datetime.now() >= value.valueDate - timedelta(days=30)) and (value.id_CarData == 5):
+			reminder = reminder_collection.find_one({ 'title' : car.name.upper() })
+			reminder["reminders"]['BOLLO']=": Devi rinnovare il BOLLO!Affrettati!"
+			reminder_collection.save(reminder)
+			flash( reminder["title"] + reminder["reminders"]["BOLLO"] , 'danger')   
 		if  ((((datetime.now() - value.valueDate >= timedelta(days=730) - timedelta(days=30)) 
 				and 
 				(datetime.now() - car.matriculation >= timedelta(days=1460)) 
@@ -78,12 +80,19 @@ def FlashReminders(car,carvalues):
 				)
 				and 
 				(value.id_CarData == 2)):    
-			flash(car.name.upper() +': Quest\' auto deve fare la REVISIONE. Affrettati!', 'danger')
+			reminder = reminder_collection.find_one({ 'title' : car.name.upper() })
+			reminder["reminders"]['REVISIONE']=": Quest'auto ha bisogno di una REVISIONE!Affrettati!"
+			reminder_collection.save(reminder)
+			flash( reminder["title"] + reminder["reminders"]["REVISIONE"] , 'danger')  
 		if ((value.id_CarData == 3) 
 			and
 			((rilievo[1] + (kmMedi*((datetime.now() - rilievo[0])/timedelta(days=7))))-value.valueInt > 30000)
 			):
-			flash(car.name.upper() +': Quest\' auto ha bisogno di un TAGLIANDO. Affrettati!', 'danger')
+			reminder = reminder_collection.find_one({ 'title' : car.name.upper() })
+			reminder["reminders"]['TAGLIANDO']=": Quest'auto ha bisogno di un TAGLIANDO!"
+			reminder_collection.save(reminder)
+			flash( reminder["title"] + reminder["reminders"]["TAGLIANDO"] , 'danger')  
+			
 
 
 

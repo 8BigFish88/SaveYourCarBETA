@@ -95,4 +95,7 @@ def delete_car(car_id):
       db.session.delete(i)
     db.session.commit()
     flash('La tua auto è stata rimossa!', 'success')
+    reminder_collection = mongo.db.reminder
+    reminder = reminder_collection.find_one({ 'title' : car.name.upper() })
+    reminder_collection.remove(reminder)
     return redirect(url_for('main.home'))
