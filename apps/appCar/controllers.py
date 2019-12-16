@@ -10,6 +10,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 from jinja2 import TemplateNotFound
 from datetime import datetime
 from apps.appCar.utils import *
+from apps import mongo
 import logging
 
 cars = Blueprint('cars', __name__, template_folder='templates')
@@ -31,6 +32,8 @@ def new_car():
        db.session.add(car)
        AddCarValueToDb(car,form)
        db.session.commit()
+       reminder_collection = mongo.db.reminder
+       reminder_collection.insert({ 'title' : car.name.upper() , 'reminders' : {} })
        flash('I dati della tua auto sono stati salvati !', 'success')
        return redirect(url_for('main.home'))
        image_file = url_for('static', filename='car_pics/' + car.image_file)

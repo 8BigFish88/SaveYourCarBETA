@@ -3,6 +3,7 @@ from apps import db
 from datetime import datetime  
 from datetime import timedelta  
 from flask import flash
+from apps import mongo
 
 def InsertCarDataValue(carValues,form):
 	for i in carValues:
@@ -54,11 +55,16 @@ def GetDateDetection(car, carvalues):
 def FlashReminders(car,carvalues):
 	kmMedi = GetKm(car, carvalues)
 	rilievo = GetDateDetection(car, carvalues)
+	reminder_collection = mongo.db.reminder
 	for value in carvalues:
-		if (datetime.now() >= value.valueDate - timedelta(days=30)) and (value.id_CarData == 4):   
-			flash(car.name.upper() +': L\' ASSICURAZIONE di quest\' auto sta per scadere. Rinnovala!', 'danger')
+		if (datetime.now() >= value.valueDate - timedelta(days=30)) and (value.id_CarData == 4):
+			reminder = reminder_collection.find_one({ 'title' : car.name.upper() })
+			reminder["reminders"]['ASSICURAZIONE']=": Devi fare la Assicurazione!Affrettati!"
+			reminder_collection.save(reminder)
+			flash( reminder["title"] + reminder["reminders"]["ASSICURAZIONE"] , 'danger')
+				#flash(car.name.upper() +': L\' ASSICURAZIONE di quest\' auto sta per scadere. Rinnovala!', 'danger')	 
 		if (datetime.now() >= value.valueDate - timedelta(days=30)) and (value.id_CarData == 5):   
-			flash(car.name.upper() +': Il BOLLO di quest\' auto sta per scadere. Rinnovalo!', 'danger')
+				 flash(car.name.upper() +': Il BOLLO di quest\' auto sta per scadere. Rinnovalo!', 'danger')
 		if  ((((datetime.now() - value.valueDate >= timedelta(days=730) - timedelta(days=30)) 
 				and 
 				(datetime.now() - car.matriculation >= timedelta(days=1460)) 
