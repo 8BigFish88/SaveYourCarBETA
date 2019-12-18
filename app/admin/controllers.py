@@ -1,9 +1,9 @@
-from apps import db, login_manager, admin
+from app import db, login_manager, admin
 from flask_login import UserMixin
 import flask_admin as admin
 from flask_admin.contrib.sqla import ModelView
-from apps.appUser.models import User
-from apps.appCar.models import Car, CarDataValue, CarData
+from app.users.models import User
+from app.cars.models import Car, CarDataValue, CarData
 from flask_admin import helpers, expose
 
 

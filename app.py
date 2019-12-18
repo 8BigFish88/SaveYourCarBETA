@@ -1,10 +1,10 @@
-from apps import create_app
+from app import create_app
 
 app = create_app()
 
-from apps import db
-from apps.appUser.models import User
-from apps.appCar.models import Car, CarData, CarDataValue
+from app import db
+from app.users.models import User
+from app.cars.models import Car, CarData, CarDataValue
 
 
 @app.shell_context_processor

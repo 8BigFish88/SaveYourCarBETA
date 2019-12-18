@@ -3,7 +3,7 @@ from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, DateField, IntegerField, RadioField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-from apps.appCar.models import Car
+from app.cars.models import Car
 
 class CarForm(FlaskForm):
     name = StringField('Nome', validators=[DataRequired()])

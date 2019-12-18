@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, url_for, flash, redirect, request, abort
 from flask_login import login_user, current_user, logout_user, login_required
-from apps import mongo
+from app import mongo
 
 reminders = Blueprint('reminders', __name__)
 

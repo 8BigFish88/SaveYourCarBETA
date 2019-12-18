@@ -1,12 +1,16 @@
 import os
 import secrets
 from PIL import Image
-from apps.appCar.models import Car, CarDataValue, CarData
-from apps import db
+from app.cars.models import Car, CarDataValue, CarData
+from app import db
 from datetime import datetime  
 from datetime import timedelta  
 from flask import flash, url_for, current_app
-from apps import mongo
+from app import mongo
+from app.settings.messages import Flash,Error
+flashM=Flash()
+errorM=Error()
+
 
 def InsertCarDataValue(carValues,form):
 	for i in carValues:
@@ -118,22 +122,22 @@ def listCarReminders(car,carvalues):
 	for value in carvalues:
 		if	assicurazione(car, value):
 			reminder = reminder_collection.find_one({ 'title' : car.name.upper() })
-			reminder["reminders"]['ASSICURAZIONE']=" Devi fare l'ASSICURAZIONE!Affrettati!"
+			reminder["reminders"]['ASSICURAZIONE']="%s"%flashM.carsAssicurazione
 			reminder_collection.save(reminder)
 			reminders_list.append(reminder["reminders"]["ASSICURAZIONE"])
 		if  bollo(car,value):
 			reminder = reminder_collection.find_one({ 'title' : car.name.upper() })
-			reminder["reminders"]['BOLLO']=" Devi rinnovare il BOLLO!Affrettati!"
+			reminder["reminders"]['BOLLO']="%s"%flashM.carsBollo
 			reminder_collection.save(reminder)
 			reminders_list.append(reminder["reminders"]["BOLLO"])  
 		if  revisione(car,value):
 			reminder = reminder_collection.find_one({ 'title' : car.name.upper() })
-			reminder["reminders"]['REVISIONE']=" Quest'auto ha bisogno di una REVISIONE!Affrettati!"
+			reminder["reminders"]['REVISIONE']="%s"%flashM.carsRevisione
 			reminder_collection.save(reminder)
 			reminders_list.append(reminder["reminders"]["REVISIONE"])  
 		if  tagliando(car, value, kmMedi, rilievo):
 			reminder = reminder_collection.find_one({ 'title' : car.name.upper() })
-			reminder["reminders"]['TAGLIANDO']=" Quest'auto ha bisogno di un TAGLIANDO!"
+			reminder["reminders"]['TAGLIANDO']="%s"%flashM.carsTagliando
 			reminder_collection.save(reminder)
 			reminders_list.append(reminder["reminders"]["TAGLIANDO"])  
 	return reminders_list

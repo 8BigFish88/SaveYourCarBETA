@@ -9,7 +9,7 @@ from flask_login import LoginManager
 from flask_mail import Mail
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
-from apps.config import Config
+from app.config import Config
 from flask_admin import helpers, expose
 import logging
 
@@ -42,11 +42,11 @@ def create_app(config_class=Config):
     admin.init_app(app)
     mail.init_app(app)
 
-    from apps.appUser.controllers import users
-    from apps.appCar.controllers import cars
-    from apps.appReminder.controllers import reminders
-    from apps.main.controllers import main
-    from apps.errors.handlers import errors
+    from app.users.controllers import users
+    from app.cars.controllers import cars
+    from app.reminders.controllers import reminders
+    from app.main.controllers import main
+    from app.errors.handlers import errors
     app.register_blueprint(users)
     app.register_blueprint(cars)
     app.register_blueprint(reminders)

@@ -1,4 +1,4 @@
-from apps import db2
+from app import db2
 
 
 class Reminder(db2.Document):

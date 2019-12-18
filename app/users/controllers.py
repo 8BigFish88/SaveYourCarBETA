@@ -1,11 +1,17 @@
 from flask import render_template, url_for, flash, redirect, request, Blueprint
 from flask_login import login_user, current_user, logout_user, login_required
-from apps import db, bcrypt
-from apps.appUser.models import User
-from apps.appCar.models import Car, CarData, CarDataValue
-from apps.appUser.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
+from app import db, bcrypt
+from app.users.models import User
+from app.cars.models import Car, CarData, CarDataValue
+from app.users.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
                                    RequestResetForm, ResetPasswordForm)
-from apps.appUser.utils import save_picture, send_reset_email
+from app.users.utils import save_picture, send_reset_email
+from app.settings.messages import Flash,Error
+from app.settings.loggings.messages import Log
+import logging
+flashM=Flash()
+errorM=Error()
+log=Log()
 
 users = Blueprint('users', __name__)
 
@@ -20,7 +26,7 @@ def register():
         user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
-        flash('Your account has been created! You are now able to log in', 'success')
+        flash('%s'%flashM.userAccountCreated, 'success')
         return redirect(url_for('users.login'))
     return render_template('register.html', title='Register', form=form)
 
@@ -37,7 +43,7 @@ def login():
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('main.home'))
         else:
-            flash('Login Unsuccessful. Please check email and password', 'danger')
+            flash('%s'%flashM.userErrorLogin, 'danger')
     return render_template('login.html', title='Login', form=form)
 
 
@@ -58,7 +64,7 @@ def account():
         current_user.username = form.username.data
         current_user.email = form.email.data
         db.session.commit()
-        flash('Your account has been updated!', 'success')
+        flash('%s'%flashM.userAccountUpdated, 'success')
         return redirect(url_for('users.account'))
     elif request.method == 'GET':
         form.username.data = current_user.username
@@ -77,7 +83,7 @@ def reset_request():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         send_reset_email(user)
-        flash('An email has been sent with instructions to reset your password.', 'info')
+        flash('%s'%flashM.userResetPasswordMail, 'info')
         return redirect(url_for('users.login'))
     return render_template('reset_request.html', title='Reset Password', form=form)
 
@@ -88,13 +94,13 @@ def reset_token(token):
         return redirect(url_for('main.home'))
     user = User.verify_reset_token(token)
     if user is None:
-        flash('That is an invalid or expired token', 'warning')
+        flash('%s'%flashM.userExpiredToken, 'warning')
         return redirect(url_for('users.reset_request'))
     form = ResetPasswordForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user.password = hashed_password
         db.session.commit()
-        flash('Your password has been updated! You are now able to log in', 'success')
+        flash('%s'%flashM.userPasswordUpdated, 'success')
         return redirect(url_for('users.login'))
     return render_template('reset_token.html', title='Reset Password', form=form)

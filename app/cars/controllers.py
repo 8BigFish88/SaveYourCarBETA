@@ -2,16 +2,21 @@ import os
 import secrets
 from PIL import Image
 from flask import Blueprint, render_template, url_for, flash, redirect, request, abort
-from apps import db, bcrypt
-from apps.appCar.forms import CarForm, PictureForm
-from apps.appUser.models import User
-from apps.appCar.models import Car, CarDataValue, CarData
+from app import db, bcrypt
+from app.cars.forms import CarForm, PictureForm
+from app.users.models import User
+from app.cars.models import Car, CarDataValue, CarData
 from flask_login import login_user, current_user, logout_user, login_required
 from jinja2 import TemplateNotFound
 from datetime import datetime
-from apps.appCar.utils import *
-from apps import mongo
+from app.cars.utils import *
+from app import mongo
+from app.settings.messages import Flash,Error
+from app.settings.loggings.messages import Log
 import logging
+flashM=Flash()
+errorM=Error()
+log=Log()
 
 cars = Blueprint('cars', __name__, template_folder='templates')
                      
@@ -38,11 +43,11 @@ def new_car():
        db.session.commit()
        reminder_collection = mongo.db.reminder
        reminder_collection.insert({ 'title' : car.name.upper() , 'reminders' : {} })
-       flash('I dati della tua auto sono stati salvati !', 'success')
+       flash('%s'%flashM.carsSavedCar, 'success')
        return redirect(url_for('main.home'))
        image_file = url_for('static', filename='car_pics/' + car.image_file)
     else:
-       logging.info('campo mancante o errato')
+       logging.info('%s'%log.missedField)
     return render_template('new_car.html', title='New Car',
                             form=form, legend='Nuova Auto')
 
@@ -70,7 +75,7 @@ def update_car(car_id):
         car.matriculation = form.matriculation.data
         InsertCarDataValue(carValues,form)
         db.session.commit()
-        flash('I dati della tua auto sono stati aggiornati!', 'success')
+        flash('%s'%flashM.carsUpdateCar, 'success')
         return redirect(url_for('cars.car', car_id=car.id))
     elif request.method == 'GET':
         form.name.data = car.name
@@ -102,7 +107,7 @@ def delete_car(car_id):
     for i in carValues:
       db.session.delete(i)
     db.session.commit()
-    flash('La tua auto è stata rimossa!', 'success')
+    flash('%s'%flashM.carsDelete, 'success')
     reminder_collection = mongo.db.reminder
     reminder = reminder_collection.find_one({ 'title' : car.name.upper() })
     reminder_collection.remove(reminder)
@@ -117,7 +122,7 @@ def update_picture(car_id):
       picture_file = save_car_picture(form.picture.data)
       car.image_file = picture_file
       db.session.commit()
-      flash('La foto della tua auto è stata aggiornata!', 'success')
+      flash('%s'%flashM.carsUpdatePicture, 'success')
       return redirect(url_for('cars.car', car_id=car.id))
     image_file = url_for('static', filename='car_pics/' + car.image_file)
     return render_template('update_car_picture.html', form=form, image_file=image_file)

@@ -1,5 +1,5 @@
 from datetime import datetime
-from apps import db, login_manager, admin
+from app import db, login_manager, admin
 from flask_admin.contrib.sqla import ModelView
 
 class CarData(db.Model):
