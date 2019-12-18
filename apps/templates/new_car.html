@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="content-section">
-    <div class="media">
-        <img class="rounded-circle new_car-img" src="{{ image_file }}">
-    </div>
     <form method="POST" action="">
+        <div class="media">
+                <a href="{{ url_for('cars.update_picture', car_id=car.id)}}" ><img class="rounded-circle new_car-img" src="{{ image_file }}"></a>
+        </div>
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
             <legend class="border-bottom mb-4">{{ legend }}</legend>

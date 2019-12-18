@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
   <article class="media content-section">
-    <img class="rounded-circle article-img" src="{{ url_for('static', filename='car_pics/' + car.image_file ) }}">
+    <a href="{{ url_for('cars.update_picture', car_id=car.id)}}" ><img class="rounded-circle article-img"src="{{ url_for('static', filename='car_pics/' + car.image_file ) }}"></a>
     <div class="media-body">
       <div class="article-metadata">
         <a class="mr-2" href="#">{{ current_user.username }}</a>

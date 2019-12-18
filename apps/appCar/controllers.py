@@ -3,7 +3,7 @@ import secrets
 from PIL import Image
 from flask import Blueprint, render_template, url_for, flash, redirect, request, abort
 from apps import db, bcrypt
-from apps.appCar.forms import CarForm
+from apps.appCar.forms import CarForm, PictureForm
 from apps.appUser.models import User
 from apps.appCar.models import Car, CarDataValue, CarData
 from flask_login import login_user, current_user, logout_user, login_required
@@ -59,9 +59,13 @@ def update_car(car_id):
     car = Car.query.get(car_id)
     carValues = CarDataValue.query.filter_by(id_Car = car.id).all()
     carData = CarData.query.all()
+    reminder_collection = mongo.db.reminder
+    reminder = reminder_collection.find_one({ 'title' : car.name.upper() }) 
     form = CarForm()
     if form.validate_on_submit():
         car.name = form.name.data
+        reminder['title'] =  car.name.upper() 
+        reminder_collection.save(reminder)
         car.fuel = form.fuel.data
         car.matriculation = form.matriculation.data
         InsertCarDataValue(carValues,form)
@@ -87,7 +91,7 @@ def update_car(car_id):
              form.kmMedi.data = i.valueInt
     image_file = url_for('static', filename='car_pics/' + car.image_file)
     return render_template('new_car.html', title='Update Car',
-                           image_file=image_file, form=form, legend='Update Car')
+                           image_file=image_file, form=form, legend='Update Car', car=car)
 
 @cars.route("/car/<int:car_id>/delete", methods=['POST'])
 @login_required
@@ -103,3 +107,18 @@ def delete_car(car_id):
     reminder = reminder_collection.find_one({ 'title' : car.name.upper() })
     reminder_collection.remove(reminder)
     return redirect(url_for('main.home'))
+
+@cars.route("/car/<int:car_id>/update_picture", methods=['GET', 'POST'])
+@login_required
+def update_picture(car_id):
+    car = Car.query.get(car_id)
+    form = PictureForm()
+    if form.picture.data:
+      picture_file = save_car_picture(form.picture.data)
+      car.image_file = picture_file
+      db.session.commit()
+      flash('La foto della tua auto è stata aggiornata!', 'success')
+      return redirect(url_for('cars.car', car_id=car.id))
+    image_file = url_for('static', filename='car_pics/' + car.image_file)
+    return render_template('update_car_picture.html', form=form, image_file=image_file)
+    

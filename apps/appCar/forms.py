@@ -17,4 +17,8 @@ class CarForm(FlaskForm):
     kmMedi = IntegerField('Km medi settimanali', validators=[DataRequired()])
     submit = SubmitField('Submit')
 
+class PictureForm(FlaskForm):
+    picture = FileField('Update Car Picture', validators=[FileAllowed(['jpg', 'png'])])
+    submit = SubmitField('Submit')
+
     

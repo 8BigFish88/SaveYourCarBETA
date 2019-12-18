@@ -1,8 +1,11 @@
+import os
+import secrets
+from PIL import Image
 from apps.appCar.models import Car, CarDataValue, CarData
 from apps import db
 from datetime import datetime  
 from datetime import timedelta  
-from flask import flash
+from flask import flash, url_for, current_app
 from apps import mongo
 
 def InsertCarDataValue(carValues,form):
@@ -136,22 +139,17 @@ def listCarReminders(car,carvalues):
 	return reminders_list
 
 
-
-
-"""
-def GetCarDataValue(CarDataValue,CaraData_id,form):
-	lista = {1 : 'kmattuali.data', 2: 'dataRevisione.data', 3: 'kmTagliando.data', 4: 'dataAssicurazione.data', 5: 'dataBollo.label', 6: 'kmMedi.data'}
-	for i in lista.keys():
-		if CaraData_id == i:
-			if i == 1 or 3 or 6:
-				setattr(form, lista[i], CarDataValue.valueInt)
-			elif i == 2 or 4 or 5:
-				setattr(form, lista[i], CarDataValue.valueDate)
-	print(form.kmattuali.data)
-
-	
-	#map(lambda item: setattr(someObject, *item), attrs.iteritems())
-"""
+def save_car_picture(form_picture):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(current_app.root_path, 'static/car_pics', picture_fn)
+    output_size = (125, 125)
+    i = Image.open(form_picture)
+    i.thumbnail(output_size)
+    i.save(picture_path)
+   
+    return picture_fn
 
 		
 		
