@@ -11,7 +11,10 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from app.config import Config
 from flask_admin import helpers, expose
-import logging
+from app.logger import logger
+from app.settings.loggings.messages import Log
+
+log = Log()
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -31,8 +34,7 @@ mail = Mail()
 
 def create_app(config_class=Config):
     app = Flask(__name__)
-    logging.basicConfig(filename='syc.log', level=logging.INFO)
-    logging.info('Started')
+    logger.info('%s' %log.start )
     app.config.from_object(Config)
     db.init_app(app)
     migrate.init_app(app, db)
