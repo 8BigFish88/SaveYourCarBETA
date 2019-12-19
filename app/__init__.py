@@ -28,7 +28,7 @@ bcrypt = Bcrypt()
 login_manager = LoginManager()
 login_manager.login_view = 'users.login'
 login_manager.login_message_category = 'info'
-admin = Admin(name='microblog', template_mode='bootstrap3')
+
 mail = Mail()
 
 
@@ -41,7 +41,6 @@ def create_app(config_class=Config):
     mongo.init_app(app)
     bcrypt.init_app(app)
     login_manager.init_app(app)
-    admin.init_app(app)
     mail.init_app(app)
 
     from app.users.controllers import users
@@ -55,7 +54,13 @@ def create_app(config_class=Config):
     app.register_blueprint(main)
     app.register_blueprint(errors)
 
-    
+    from app.users.models import User
+    from app.cars.models import Car, CarDataValue, CarData
 
+    admin = Admin(app, name='microblog', template_mode='bootstrap3')
+    admin.add_view(ModelView(User, db.session))
+    admin.add_view(ModelView(Car, db.session))
+    admin.add_view(ModelView(CarDataValue, db.session))
+    admin.add_view(ModelView(CarData, db.session))
 
     return app
