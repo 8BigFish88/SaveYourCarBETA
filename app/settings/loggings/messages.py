@@ -1,0 +1,12 @@
+class Log():
+    level = '%(levelname)s %(asctime)s  %(message)s'
+    dateFmt = '%d/%m/%Y %I:%M:%S %p'
+    mode = 'w'
+    filename = 'app.log'
+    start = 'Started'
+    notFound = 'nessun risultato trovato'
+    enterListUsers = 'aperta pagina ListUsers'
+    exitListUsers = 'uscita pagina Users'
+    missedField = 'campo mancante o errato'
+    loginHome = 'Aperta pagina Home per utente autenticato'
+    logoutHome = 'Aperta pagina Home per utente non autenticato'

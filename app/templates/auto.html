@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block content %}
+    {% for cars in current_user.cars %}
+        <article class="media content-section">
+            <a href="{{ url_for('cars.update_picture', car_id=cars.id)}}" ><img class="rounded-circle article-img" src="{{ url_for('static', filename='car_pics/' + cars.image_file)}}"></a>
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="#">{{ cars.fuel }}</a>
+              <small class="text-muted">{{ cars.matriculation.strftime('%Y-%m-%d') }}</small>
+            </div>
+            <h2><a class="article-title" href="{{ url_for('cars.car', car_id=cars.id) }}">{{ cars.name }}</a></h2>
+          </div>
+        </article>
+        {% for reminder in user_cars[cars.name.upper()] %}
+        <div>
+          <div class="alert alert-danger" role="alert">{{ reminder }}</div>
+        </div>
+        {% endfor %}
+    {% endfor %}
+{% endblock content %}
