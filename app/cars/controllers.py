@@ -52,6 +52,7 @@ def new_car():
                             form=form, legend='Nuova Auto')
 
 @cars.route("/car/<int:car_id>")
+@login_required
 def car(car_id):
     car = Car.query.get(car_id)
     carValues = CarDataValue.query.filter_by(id_Car = car.id).all()
@@ -75,6 +76,7 @@ def update_car(car_id):
         car.matriculation = form.matriculation.data
         InsertCarDataValue(carValues,form)
         db.session.commit()
+        listCarReminders(car,carValues)
         flash('%s'%flashM.carsUpdateCar, 'success')
         return redirect(url_for('cars.car', car_id=car.id))
     elif request.method == 'GET':

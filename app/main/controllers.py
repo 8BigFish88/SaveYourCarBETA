@@ -7,7 +7,7 @@ log = Log()
 main = Blueprint('main', __name__)
 
 
-@main.route("/")
+
 @main.route("/home")
 def home():
 	if current_user.is_authenticated:

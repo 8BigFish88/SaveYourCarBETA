@@ -1,3 +1,11 @@
+from flask import jsonify, request
+from flask_restplus import Resource, reqparse, inputs
+from app.users.models import User, UserSchema
+from app.cars.models import Car, CarData, CarDataValue, CarSchema, CarDataSchema, CarDataValueSchema
+from app import api
+from werkzeug.datastructures import FileStorage
+from flask_wtf.file import FileField
+
 from flask import render_template, url_for, flash, redirect, request, Blueprint
 from flask_login import login_user, current_user, logout_user, login_required
 from app import db, bcrypt
@@ -13,24 +21,85 @@ flashM=Flash()
 errorM=Error()
 log=Log()
 
-users = Blueprint('users', __name__)
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)
 
+"""
+parserPost = reqparse.RequestParser()
+parserPost.add_argument('username',type=str, required=True,
+help="This field cannot be blank!")
+parserPost.add_argument('email',type=str, required=False)
+parserPost.add_argument('avatar',type=str, required=False)
+parserPost.add_argument('description',type=str, required=False)
+"""
+parserPost = reqparse.RequestParser(bundle_errors=True)
+parserPost.add_argument('username',type=str, required=True,
+help="This field cannot be blank!")
+parserPost.add_argument('email',type=RegistrationForm.email, required=False)
+parserPost.add_argument('password',type=str, required=False)
 
-@users.route("/register", methods=['GET', 'POST'])
-def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+parserId = reqparse.RequestParser()
+parserId.add_argument('user_id',type=int, required=True,
+help="This field cannot be blank!")
+
+parserPut = reqparse.RequestParser()
+parserPut.add_argument('user_id',type=int, required=True,
+help="This field cannot be blank!")
+parserPut.add_argument('username',type=str, required=False)
+parserPut.add_argument('image_file',type=UpdateAccountForm.picture, required=False)
+parserPut.add_argument('email',type=str, required=False)
+
+@api.route('/api/v1.0/users')
+class GET_Users(Resource):
+    def get(self):
+        users = User.query.order_by(User.username).all()
+        return jsonify(users_schema.dump(users))
+
+@api.route('/api/v1.0/user')
+class POST_Register_User(Resource):
+    @api.expect(parserPost)
+    def post(self):
+        hashed_password = bcrypt.generate_password_hash(request.args.get('password')).decode('utf-8')
+        user = User(
+        username=request.args.get('username'),
+        email=request.args.get('email'),
+        password=hashed_password)
         db.session.add(user)
         db.session.commit()
-        flash('%s'%flashM.userAccountCreated, 'success')
-        return redirect(url_for('users.login'))
-    return render_template('register.html', title='Register', form=form)
+        return jsonify(user_schema.dump(user))
+
+    @api.expect(parserId)
+    def get(self):
+        user_id=request.args.get('user_id')
+        user = User.query.get_or_404(user_id)
+        if not user:
+            abort(404)
+        return jsonify(user_schema.dump(user))
+
+    @api.expect(parserId)
+    def delete(self):
+        user_id=request.args.get('user_id')
+        user = User.query.get_or_404(user_id)
+        if not user:
+            abort(404)
+        db.session.delete(user)
+        db.session.commit()
+        return jsonify({'result': True})
+
+    @api.expect(parserPut)
+    def put(self):
+        user_id=request.args.get('user_id')
+        user = User.query.get_or_404(user_id)
+        if not user:
+            abort(404)
+        user.name = request.args.get('username') if request.args.get('username') else user.username
+        user.image_file =  save_picture(request.args.get('image_file')) if request.args.get('image_file') else user.image_file
+        user.email =  request.args.get('email') if request.args.get('email') else user.email
+        db.session.commit()
+        return jsonify(user_schema.dump(user))
 
 
+"""
 @users.route("/login", methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -104,3 +173,5 @@ def reset_token(token):
         flash('%s'%flashM.userPasswordUpdated, 'success')
         return redirect(url_for('users.login'))
     return render_template('reset_token.html', title='Reset Password', form=form)
+"""
+

@@ -1,6 +1,7 @@
 from datetime import datetime
 from app import db, login_manager, admin
 from flask_admin.contrib.sqla import ModelView
+from marshmallow_sqlalchemy import ModelSchema
 
 class CarData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -33,5 +34,21 @@ class CarDataValue(db.Model):
 
     def __repr__(self):
         return f"Car('{self.valueInt}', '{self.valueDate}')"
+
+
+class CarSchema(ModelSchema):
+    class Meta:
+        model = Car
+        sqla_session = db.session
+
+class CarDataValueSchema(ModelSchema):
+    class Meta:
+        model = CarDataValue
+        sqla_session = db.session
+
+class CarDataSchema(ModelSchema):
+    class Meta:
+        model = CarData
+        sqla_session = db.session
 
 

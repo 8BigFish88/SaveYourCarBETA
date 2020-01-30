@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_restplus import Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_mongoalchemy import MongoAlchemy
 from flask_pymongo import PyMongo
@@ -13,6 +14,7 @@ from app.config import Config
 from flask_admin import helpers, expose
 from app.logger import logger
 from app.settings.loggings.messages import Log
+from flask_cors import CORS, cross_origin
 
 log = Log()
 
@@ -21,6 +23,10 @@ migrate = Migrate()
 #client = pymongo.MongoClient("mongodb+srv://quadrophenia:password4321@cluster0-unq9q.mongodb.net/test?retryWrites=true&w=majority")
 mongo = PyMongo()
 #db2 = client.test
+
+api = Api()
+cors = CORS()
+
 
 #db2 = MongoAlchemy()
 #db2 = MongoEngine()
@@ -40,8 +46,10 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     mongo.init_app(app)
     bcrypt.init_app(app)
+    api.init_app(app, version='1.0', title='SYC API')
     login_manager.init_app(app)
     mail.init_app(app)
+    cors.init_app(app)
 
     from app.users.controllers import users
     from app.cars.controllers import cars
@@ -56,11 +64,16 @@ def create_app(config_class=Config):
 
     from app.users.models import User
     from app.cars.models import Car, CarDataValue, CarData
+    from app.API.api import POST_Register_User
+    from app.API.api import GET_Users
 
     admin = Admin(app, name='microblog', template_mode='bootstrap3')
     admin.add_view(ModelView(User, db.session))
     admin.add_view(ModelView(Car, db.session))
     admin.add_view(ModelView(CarDataValue, db.session))
     admin.add_view(ModelView(CarData, db.session))
+
+    api.add_resource(POST_Register_User,'/api/v1.0/user')
+    api.add_resource(GET_Users,'/api/v1.0/users')
 
     return app

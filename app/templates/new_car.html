@@ -3,7 +3,11 @@
 <div class="content-section">
     <form method="POST" action="">
         <div class="media">
+            {% if car %}
                 <a href="{{ url_for('cars.update_picture', car_id=car.id)}}" ><img class="rounded-circle new_car-img" src="{{ image_file }}"></a>
+            {% else %}
+                <img class="rounded-circle new_car-img" src="{{ url_for('static', filename='car_pics/default.png')}}">
+            {% endif %}
         </div>
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
