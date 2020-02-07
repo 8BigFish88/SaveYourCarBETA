@@ -10,7 +10,7 @@ from flask_login import LoginManager
 from flask_mail import Mail
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
-from app.config import Config
+#from app.config import Config
 from flask_admin import helpers, expose
 from app.logger import logger
 from app.settings.loggings.messages import Log
@@ -41,7 +41,7 @@ mail = Mail()
 def create_app(config_class=Config):
     app = Flask(__name__)
     logger.info('%s' %log.start )
-    app.config.from_object(Config)
+    #app.config.from_object(Config)
     db.init_app(app)
     migrate.init_app(app, db)
     mongo.init_app(app)

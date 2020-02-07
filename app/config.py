@@ -2,6 +2,9 @@ import os
 from os import environ
 
 
+
+
+"""
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY2')
     SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI2')
@@ -14,3 +17,4 @@ class Config:
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     BUNDLE_ERRORS = True
+"""
