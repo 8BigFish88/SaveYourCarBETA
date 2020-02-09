@@ -1,1 +1,4 @@
-gunicorn 'app:create_app("production")' --workers 16
+from app.app import create_app
+app = create_app("production")
+
+gunicorn wsgi:app --workers 16
