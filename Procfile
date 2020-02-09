@@ -1,1 +1,1 @@
-gunicorn app:wsgi --workers 16
+gunicorn wsgi:app --workers 16
