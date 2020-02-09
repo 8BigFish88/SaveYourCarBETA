@@ -1,1 +1,1 @@
-web: gunicorn app: create_app --preload --workers 16 
+gunicorn 'app:create_app("production")' --workers 16
