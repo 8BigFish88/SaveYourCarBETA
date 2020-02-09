@@ -9,7 +9,8 @@ from app.cars.models import Car, CarData, CarDataValue
 def make_shell_context():
     return {'db': db, 'User': User, 'Car': Car, 'CarData': CarData, 'CarDataValue' : CarDataValue}
 
-if __name__ == '__main__':
-    app = create_app()
-    app.run(debug=True)
+app = create_app()
+app.run(debug=True)
+#if __name__ == '__main__':
+
 
