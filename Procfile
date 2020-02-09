@@ -1,1 +1,1 @@
-web: gunicorn wsgi:app --workers 16
+web: gunicorn app:app --workers 16
