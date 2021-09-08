@@ -25,7 +25,7 @@ MarkupSafe==1.1.1
 mccabe==0.6.1
 MongoAlchemy==0.19
 mpmath==1.1.0
-Pillow==6.2.1
+Pillow==8.3.2
 pycparser==2.19
 pylint==2.4.4
 pymongo==2.8.1
